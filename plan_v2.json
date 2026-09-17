@@ -1,0 +1,240 @@
+[
+  {
+    "step": "Read and understand backend dependencies and boilerplate structure.",
+    "sub_steps": [
+      "Open /home/coder/project/workspace/question_generation_service/solutions/f2e11f06-2c96-4922-be09-be1fb3da0d37/springapp/pom.xml to review dependencies to confirm availability of Spring Web, Data JPA, Validation, MySQL.",
+      "Review the existing directory and file structure under springapp to confirm where to create model, repository, service, controller, and test files.",
+      "Verify application.properties has MySQL datasource properly configured.",
+      "Open CrowdfundingPlatformApplication.java to confirm project entry point."
+    ],
+    "files_to_add": [],
+    "files_to_edit": [
+      "/home/coder/project/workspace/question_generation_service/solutions/f2e11f06-2c96-4922-be09-be1fb3da0d37/springapp/pom.xml",
+      "/home/coder/project/workspace/question_generation_service/solutions/f2e11f06-2c96-4922-be09-be1fb3da0d37/springapp/src/main/resources/application.properties",
+      "/home/coder/project/workspace/question_generation_service/solutions/f2e11f06-2c96-4922-be09-be1fb3da0d37/springapp/src/main/java/com/examly/springapp/CrowdfundingPlatformApplication.java"
+    ],
+    "description": "This step ensures a strong understanding of the dependencies, confirms the use of MySQL, identifies where to implement new code, and provides context for subsequent backend steps."
+  },
+  {
+    "step": "Implement core backend entities, repositories, and helper enums/constants.",
+    "sub_steps": [
+      "Create Campaign entity including fields: id, title, description, goalAmount, currentAmount, deadline, category, creatorName, createdAt, status. Setup validation annotations as per requirements.",
+      "Create Donation entity including fields: id, amount, donorName, message, donatedAt, campaign (ManyToOne relation). Setup validation.",
+      "Create CampaignStatus enum (ACTIVE, COMPLETED, EXPIRED).",
+      "Create repositories for Campaign (CampaignRepository) and Donation (DonationRepository)."
+    ],
+    "files_to_add": [
+      "/home/coder/project/workspace/question_generation_service/solutions/f2e11f06-2c96-4922-be09-be1fb3da0d37/springapp/src/main/java/com/examly/springapp/model/Campaign.java",
+      "/home/coder/project/workspace/question_generation_service/solutions/f2e11f06-2c96-4922-be09-be1fb3da0d37/springapp/src/main/java/com/examly/springapp/model/Donation.java",
+      "/home/coder/project/workspace/question_generation_service/solutions/f2e11f06-2c96-4922-be09-be1fb3da0d37/springapp/src/main/java/com/examly/springapp/model/CampaignStatus.java",
+      "/home/coder/project/workspace/question_generation_service/solutions/f2e11f06-2c96-4922-be09-be1fb3da0d37/springapp/src/main/java/com/examly/springapp/repository/CampaignRepository.java",
+      "/home/coder/project/workspace/question_generation_service/solutions/f2e11f06-2c96-4922-be09-be1fb3da0d37/springapp/src/main/java/com/examly/springapp/repository/DonationRepository.java"
+    ],
+    "files_to_edit": [],
+    "description": "Defines the core data models with required fields, validation, and relationships, and creates repositories for database access. This provides the foundation for all subsequent backend logic."
+  },
+  {
+    "step": "Implement service layer for campaign and donation management with business logic for status auto-update.",
+    "sub_steps": [
+      "Create CampaignService for managing campaign creation, listing (with filtering), getting by ID, and status update (including auto-completion when reaching goal/expired).",
+      "Create DonationService for handling donation creation (with validation/status checks), retrieval, and updating campaign currentAmount/status upon donation.",
+      "Implement helper methods to check and update campaign status based on goal and deadline.",
+      "Inject necessary repositories using @Autowired.",
+      "Handle validation exceptions and not found cases with appropriate error messages."
+    ],
+    "files_to_add": [
+      "/home/coder/project/workspace/question_generation_service/solutions/f2e11f06-2c96-4922-be09-be1fb3da0d37/springapp/src/main/java/com/examly/springapp/service/CampaignService.java",
+      "/home/coder/project/workspace/question_generation_service/solutions/f2e11f06-2c96-4922-be09-be1fb3da0d37/springapp/src/main/java/com/examly/springapp/service/DonationService.java"
+    ],
+    "files_to_edit": [],
+    "description": "Implements the business logic for campaign and donation management, status transitions, and repository interactions. Centralizes logic for status auto-updates according to requirements."
+  },
+  {
+    "step": "Implement RESTful controllers for campaigns and donations and error/validation handling.",
+    "sub_steps": [
+      "Create CampaignController with endpoints: POST /api/campaigns, GET /api/campaigns, GET /api/campaigns/{id}. Use service layer methods.",
+      "Create DonationController with endpoints: POST /api/campaigns/{campaignId}/donations, GET /api/campaigns/{campaignId}/donations.",
+      "Implement global exception handler for handling MethodArgumentNotValidException, EntityNotFound, and custom business exceptions, returning 400/404 with error messages.",
+      "Ensure each endpoint satisfies the request/response format per requirements.",
+      "Add @CrossOrigin annotation or create CORS configuration to allow React frontend (http://localhost:3000) to access backend APIs."
+    ],
+    "files_to_add": [
+      "/home/coder/project/workspace/question_generation_service/solutions/f2e11f06-2c96-4922-be09-be1fb3da0d37/springapp/src/main/java/com/examly/springapp/controller/CampaignController.java",
+      "/home/coder/project/workspace/question_generation_service/solutions/f2e11f06-2c96-4922-be09-be1fb3da0d37/springapp/src/main/java/com/examly/springapp/controller/DonationController.java",
+      "/home/coder/project/workspace/question_generation_service/solutions/f2e11f06-2c96-4922-be09-be1fb3da0d37/springapp/src/main/java/com/examly/springapp/exception/GlobalExceptionHandler.java",
+      "/home/coder/project/workspace/question_generation_service/solutions/f2e11f06-2c96-4922-be09-be1fb3da0d37/springapp/src/main/java/com/examly/springapp/config/CorsConfig.java"
+    ],
+    "files_to_edit": [],
+    "description": "Creates RESTful API endpoints for all required campaign and donation functions, with robust error and validation handling. Ensures frontend can access backend endpoints (CORS)."
+  },
+  {
+    "step": "Implement ALL backend test cases with JUnit.",
+    "sub_steps": [
+      "Create unit/integration test classes under /test/java/com/examly/springapp/ for controllers and services.",
+      "Implement 'testCreateCampaign': Valid campaign creation, check response, status, DB state (assert created, 201, correct fields, status ACTIVE).",
+      "Implement 'testCreateCampaignValidation': Validation failures for empty/short title, short description, low goalAmount, past deadline. Assert 400 with correct messages, DB unchanged.",
+      "Implement 'testMakeDonation': Create campaign, make donation, assert donation saved, campaign currentAmount updated, status ACTIVE (not completed).",
+      "Implement 'testCampaignStatusUpdate': Donate to reach goal (assert status updates to COMPLETED), create expired campaign (assert EXPIRED on retrieval), test status filtering.",
+      "Set up required mocks, test data, transactional context, and ensure DB isolation between tests."
+    ],
+    "files_to_add": [
+      "/home/coder/project/workspace/question_generation_service/solutions/f2e11f06-2c96-4922-be09-be1fb3da0d37/springapp/src/test/java/com/examly/springapp/service/CampaignServiceTest.java",
+      "/home/coder/project/workspace/question_generation_service/solutions/f2e11f06-2c96-4922-be09-be1fb3da0d37/springapp/src/test/java/com/examly/springapp/service/DonationServiceTest.java",
+      "/home/coder/project/workspace/question_generation_service/solutions/f2e11f06-2c96-4922-be09-be1fb3da0d37/springapp/src/test/java/com/examly/springapp/controller/CampaignControllerTest.java",
+      "/home/coder/project/workspace/question_generation_service/solutions/f2e11f06-2c96-4922-be09-be1fb3da0d37/springapp/src/test/java/com/examly/springapp/controller/DonationControllerTest.java"
+    ],
+    "files_to_edit": [
+      "/home/coder/project/workspace/question_generation_service/solutions/f2e11f06-2c96-4922-be09-be1fb3da0d37/springapp/src/test/java/com/examly/springapp/CrowdfundingPlatformApplicationTests.java"
+    ],
+    "description": "Implements all JUnit backend test cases to cover creation, validation, donation logic, and campaign status auto-updates. Verifies all business rules and REST endpoint behaviors according to the provided test case JSON."
+  },
+  {
+    "step": "Build and compile the backend codebase.",
+    "sub_steps": [
+      "Run 'mvn clean compile -q -Dspring.main.banner-mode=off' under the springapp directory.",
+      "Resolve any compile errors before proceeding."
+    ],
+    "files_to_add": [],
+    "files_to_edit": [],
+    "description": "Compiles backend codebase to check for errors, ensuring all classes, methods, and configurations are syntactically correct."
+  },
+  {
+    "step": "Run all backend tests.",
+    "sub_steps": [
+      "Execute 'mvn test -q -Dspring.main.banner-mode=off' under the springapp directory.",
+      "Review and resolve any test failures before proceeding."
+    ],
+    "files_to_add": [],
+    "files_to_edit": [],
+    "description": "Runs all backend unit and integration tests to confirm correct implementation and adherence to requirements and test contracts."
+  },
+  {
+    "step": "Read and understand frontend dependencies and React boilerplate structure.",
+    "sub_steps": [
+      "Open /home/coder/project/workspace/question_generation_service/solutions/f2e11f06-2c96-4922-be09-be1fb3da0d37/reactapp/package.json to list dependencies.",
+      "Review /reactapp/src/ for current structure: index.js, App.js, App.css, etc.",
+      "Determine where to place new components (create src/components/), utilities (src/utils/), and CSS files.",
+      "Review existing public/index.html for any root app setup."
+    ],
+    "files_to_add": [],
+    "files_to_edit": [
+      "/home/coder/project/workspace/question_generation_service/solutions/f2e11f06-2c96-4922-be09-be1fb3da0d37/reactapp/package.json",
+      "/home/coder/project/workspace/question_generation_service/solutions/f2e11f06-2c96-4922-be09-be1fb3da0d37/reactapp/src/App.js"
+    ],
+    "description": "Confirms the React dependencies and the appropriate above-structure for implementing the required UI, logic, and tests."
+  },
+  {
+    "step": "Create utility files (API calls, constants, helpers) and CSS variables.",
+    "sub_steps": [
+      "Create src/utils/api.js for backend API integration (baseURL 'http://localhost:8080', fetch wrappers for campaigns/donations).",
+      "Create src/utils/constants.js for campaign categories, status constants, and any error messages.",
+      "Update or create src/App.css to add CSS variables and style utility classes per requirements (see design rules)."
+    ],
+    "files_to_add": [
+      "/home/coder/project/workspace/question_generation_service/solutions/f2e11f06-2c96-4922-be09-be1fb3da0d37/reactapp/src/utils/api.js",
+      "/home/coder/project/workspace/question_generation_service/solutions/f2e11f06-2c96-4922-be09-be1fb3da0d37/reactapp/src/utils/constants.js"
+    ],
+    "files_to_edit": [
+      "/home/coder/project/workspace/question_generation_service/solutions/f2e11f06-2c96-4922-be09-be1fb3da0d37/reactapp/src/App.css"
+    ],
+    "description": "Establishes helper functions for backend interaction and system-wide constants. Defines CSS variables and utility classes to provide a consistent look and support uniform styling in components."
+  },
+  {
+    "step": "Implement navigation bar and main App layout.",
+    "sub_steps": [
+      "Create src/components/NavBar.js to provide navigation links ('Home', 'Create Campaign') with styling.",
+      "Edit App.js to use NavBar and React Router to navigate between listing, details, and create pages.",
+      "Setup routing (using React Router v6) for at least '/', '/create', '/campaign/:id'."
+    ],
+    "files_to_add": [
+      "/home/coder/project/workspace/question_generation_service/solutions/f2e11f06-2c96-4922-be09-be1fb3da0d37/reactapp/src/components/NavBar.js"
+    ],
+    "files_to_edit": [
+      "/home/coder/project/workspace/question_generation_service/solutions/f2e11f06-2c96-4922-be09-be1fb3da0d37/reactapp/src/App.js"
+    ],
+    "description": "Enables users to navigate between main sections of the app consistently with a styled navigation bar."
+  },
+  {
+    "step": "Implement Campaign Listing Page (with filtering and card layout) and tests.",
+    "sub_steps": [
+      "Create src/components/CampaignList.js with card-style rendering (title, short description, goal/current amount, progress, deadline, status).",
+      "Implement category and status filter dropdowns using constants from utils.",
+      "Enable card click to navigate to Campaign Details page.",
+      "Style using CSS variables, flexbox, and ensure empty/loading states are user-friendly.",
+      "Create src/components/CampaignList.test.js implementing all provided test cases (rendering, filters, card layout, data-testid selectors, etc.)."
+    ],
+    "files_to_add": [
+      "/home/coder/project/workspace/question_generation_service/solutions/f2e11f06-2c96-4922-be09-be1fb3da0d37/reactapp/src/components/CampaignList.js",
+      "/home/coder/project/workspace/question_generation_service/solutions/f2e11f06-2c96-4922-be09-be1fb3da0d37/reactapp/src/components/CampaignList.test.js"
+    ],
+    "files_to_edit": [],
+    "description": "Implements the campaign listing page with all UI and interaction requirements and complete test coverage for listing and filter logic."
+  },
+  {
+    "step": "Implement Campaign Details Page (with donation list/form, details) and tests.",
+    "sub_steps": [
+      "Create src/components/CampaignDetails.js to fetch and display all campaign details (title, description, goal/current amount, progress, deadline, creator, category, status, created date).",
+      "Display list of donations (name, amount, date, message if any).",
+      "Display donation form (amount, donorName, message) with proper enable/disable depending on campaign status.",
+      "Implement logic for submitting donations and updating UI on success.",
+      "Apply correct styling and progress bars per design rules.",
+      "Create src/components/CampaignDetails.test.js for all provided test cases (rendering, progress, donation list, donation form state, submitting a donation)."
+    ],
+    "files_to_add": [
+      "/home/coder/project/workspace/question_generation_service/solutions/f2e11f06-2c96-4922-be09-be1fb3da0d37/reactapp/src/components/CampaignDetails.js",
+      "/home/coder/project/workspace/question_generation_service/solutions/f2e11f06-2c96-4922-be09-be1fb3da0d37/reactapp/src/components/CampaignDetails.test.js"
+    ],
+    "files_to_edit": [],
+    "description": "Implements campaign details, donation list, donation form, and full test coverage for details rendering and form logic."
+  },
+  {
+    "step": "Implement Create Campaign Page (form, validation, redirection) and tests.",
+    "sub_steps": [
+      "Create src/components/CreateCampaign.js with the required form fields and dropdown for category.",
+      "Enforce validation rules on all required fields using state/form validation; display descriptive error messages.",
+      "On successful form submission, create campaign via API and redirect to details page.",
+      "Apply required styles (centered form, error state, disabled/active states).",
+      "Create src/components/CreateCampaign.test.js for all test cases: form rendering, validation, dropdown content, date input logic, submission, redirection, and error messages."
+    ],
+    "files_to_add": [
+      "/home/coder/project/workspace/question_generation_service/solutions/f2e11f06-2c96-4922-be09-be1fb3da0d37/reactapp/src/components/CreateCampaign.js",
+      "/home/coder/project/workspace/question_generation_service/solutions/f2e11f06-2c96-4922-be09-be1fb3da0d37/reactapp/src/components/CreateCampaign.test.js"
+    ],
+    "files_to_edit": [],
+    "description": "Implements the create campaign page with full input validation, category selection, form submission handling, and test coverage for all specified behaviors."
+  },
+  {
+    "step": "Update App.js to integrate all components and ensure application-wide styling.",
+    "sub_steps": [
+      "Import and route CampaignList, CampaignDetails, CreateCampaign in App.js.",
+      "Ensure App.js is styled using the CSS variables and utility classes.",
+      "Test that navigation and routing work correctly."
+    ],
+    "files_to_add": [],
+    "files_to_edit": [
+      "/home/coder/project/workspace/question_generation_service/solutions/f2e11f06-2c96-4922-be09-be1fb3da0d37/reactapp/src/App.js"
+    ],
+    "description": "Completes the main integration and wiring of the app, ensuring navigation, layout, and styling are aligned with requirements."
+  },
+  {
+    "step": "Run and compile the frontend React codebase and lint code.",
+    "sub_steps": [
+      "Run 'npm install' in /reactapp to install all dependencies.",
+      "Run 'npm run build' to check for any build errors.",
+      "Run 'npx eslint src/ --fix' to lint and auto-fix issues."
+    ],
+    "files_to_add": [],
+    "files_to_edit": [],
+    "description": "Ensures React code compiles, dependencies are in place, and code styling/quality meets required standards."
+  },
+  {
+    "step": "Run all frontend tests.",
+    "sub_steps": [
+      "Run 'npm run test:ci' in /reactapp to execute tests and check all criteria are met.",
+      "Review and resolve any test failures."
+    ],
+    "files_to_add": [],
+    "files_to_edit": [],
+    "description": "Completes the verification of frontend requirements and ensures the solution meets all test case expectations."
+  }
+]
